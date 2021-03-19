@@ -13,6 +13,7 @@ import {
   StatusBar,
   StyleSheet,
   useColorScheme,
+  PermissionsAndroid
 } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import {
@@ -30,27 +31,24 @@ const App = () => {
   };
 
   const [position, setPosition] = useState<Position>({ latitude: -37.7046061, longitude: 144.9173406970003, })
-  /* 
+  
     async function permissions() {
       try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
         )
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          alert("You can use the location")
-        }
-        else {
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED){
           alert("Location permission denied")
         }
       }
       catch (err) {
         console.warn(err)
       }
-    } */
+    } 
 
   useEffect(() => {
 
-    // permissions()
+    permissions()
 
     Geolocation.getCurrentPosition((success) => {
       setPosition(success.coords)
