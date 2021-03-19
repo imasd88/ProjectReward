@@ -14,12 +14,14 @@ import {
   StyleSheet,
   useColorScheme,
   PermissionsAndroid
+  , Pressable
 } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
 import MapView, { Marker } from 'react-native-maps';
+import getDirections from 'react-native-google-maps-directions'
 
 
 
@@ -31,20 +33,20 @@ const App = () => {
   };
 
   const [position, setPosition] = useState<Position>({ latitude: -37.7046061, longitude: 144.9173406970003, })
-  
-    async function permissions() {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-        )
-        if (granted !== PermissionsAndroid.RESULTS.GRANTED){
-          alert("Location permission denied")
-        }
+
+  async function permissions() {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+      )
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        alert("Location permission denied")
       }
-      catch (err) {
-        console.warn(err)
-      }
-    } 
+    }
+    catch (err) {
+      console.warn(err)
+    }
+  }
 
   useEffect(() => {
 
@@ -81,6 +83,47 @@ const App = () => {
   { latitude: -37.7047955, longitude: 144.96953804853564, title: 'Glenroy', address: 'Mosque' },
   { latitude: -37.6996641, longitude: 144.56036575434626, title: 'brookfield', address: '' }]
 
+  const handleGetDirections = (coords: coords) => {
+    const data = {
+       source: {
+        latitude: position.latitude,
+        longitude: position.longitude
+      },
+      destination: {
+        latitude: coords.latitude,
+        longitude: coords.longitude
+      },
+      params: [
+        {
+          key: "travelmode",
+          value: "driving"        // may be "walking", "bicycling" or "transit" as well
+        },
+        {
+          key: "dir_action",
+          value: "navigate"       // this instantly initializes navigation using the given travel mode
+        }
+      ],
+   /*    waypoints: [
+        {
+          latitude: -33.8600025,
+          longitude: 18.697452
+        },
+        {
+          latitude: -33.8600026,
+          longitude: 18.697453
+        },
+           {
+          latitude: -33.8600036,
+          longitude: 18.697493
+        }
+      ] */
+    }
+
+    console.log(data)
+ 
+    getDirections(data)
+  }
+
   return (
 
     <MapView
@@ -98,6 +141,8 @@ const App = () => {
           coordinate={coords}
           title={coords.title}
           description={coords.address}
+          onPress={()=>handleGetDirections(coords)}
+          tooltip={true}
         />
       )
       }
